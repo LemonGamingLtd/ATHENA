@@ -3,6 +3,8 @@ package io.github.thatsmusic99.athena;
 import io.github.thatsmusic99.athena.commands.AthenaCommand;
 import io.github.thatsmusic99.athena.util.EventCache;
 import io.github.thatsmusic99.athena.util.RemappingUtil;
+import me.nahu.scheduler.wrapper.FoliaWrappedJavaPlugin;
+import me.nahu.scheduler.wrapper.WrappedScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -11,17 +13,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class AthenaCore extends JavaPlugin {
+public class AthenaCore extends FoliaWrappedJavaPlugin {
 
     private static AthenaCore instance;
 
     @Override
     public void onEnable() {
         instance = this;
+        getLogger().info("Successfully initialized scheduler wrapper of type: " + getScheduler().getImplementationType());
+
         getCommand("athena").setExecutor(new AthenaCommand());
         new Metrics(this, 12408);
         new RemappingUtil();
-        Bukkit.getScheduler().runTaskAsynchronously(this, EventCache::new);
+
+        getScheduler().runTaskAsynchronously(EventCache::new);
     }
 
     public static AthenaCore get() {
@@ -30,7 +35,7 @@ public class AthenaCore extends JavaPlugin {
 
     public static Component getPrefix() {
         return Component.text("ATHENA ", TextColor.color(0x9ED0FF))
-                .append(Component.text("» ", NamedTextColor.DARK_GRAY));
+            .append(Component.text("» ", NamedTextColor.DARK_GRAY));
     }
 
     public static TextColor getInfoColour() {

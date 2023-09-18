@@ -4,6 +4,7 @@ version: 1.0
 author: Thatsmusic99
 api-version: 1.17
 contributors: [oxolotel, YouHaveTrouble]
+folia-supported: true
 
 commands:
   athena:
