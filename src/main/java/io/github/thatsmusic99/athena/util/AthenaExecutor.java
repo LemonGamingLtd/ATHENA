@@ -124,25 +124,23 @@ public class AthenaExecutor implements EventExecutor {
     }
 
     private void dumpData(long completionTime, HashMap<String, RemappingUtil.Change> differences) {
-        TextComponent infoDump;
-        TextComponent hoverText = Component.text().build();
-        if (!differences.isEmpty()) {
-            infoDump = Component.text(listener.getPlugin().getName(), AthenaCore.getInfoColour())
-                    .append(Component.text(" made some changes to the event!", AthenaCore.getSuccessColour()));
-
-            for (String key : differences.keySet()) {
-                hoverText = hoverText.append(Component.text(key, AthenaCore.getInfoColour()))
-                        .append(Component.text(" » ", NamedTextColor.DARK_GRAY))
-                        .append(Component.text(differences.get(key).getOldObject(), AthenaCore.getSuccessColour()))
-                        .append(Component.text(" to ", NamedTextColor.GRAY))
-                        .append(Component.text(differences.get(key).getNewObject(), AthenaCore.getSuccessColour()))
-                        .append(Component.text("\n"));
-            }
-        } else {
-            infoDump = Component.text(listener.getPlugin().getName() + " didn't make any changes.",
-                    TextColor.color(0xA0B1B8), TextDecoration.ITALIC);
-
+        if (differences.isEmpty()) {
+            return;
         }
+
+        TextComponent hoverText = Component.text().build();
+        TextComponent infoDump = Component.text(listener.getPlugin().getName(), AthenaCore.getInfoColour())
+            .append(Component.text(" made some changes to the event!", AthenaCore.getSuccessColour()));
+
+        for (String key : differences.keySet()) {
+            hoverText = hoverText.append(Component.text(key, AthenaCore.getInfoColour()))
+                    .append(Component.text(" » ", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(differences.get(key).getOldObject(), AthenaCore.getSuccessColour()))
+                    .append(Component.text(" to ", NamedTextColor.GRAY))
+                    .append(Component.text(differences.get(key).getNewObject(), AthenaCore.getSuccessColour()))
+                    .append(Component.text("\n"));
+        }
+
         Class<?> listenerClass = listener.getListener().getClass();
         hoverText = hoverText.append(Component.text("Completion time ", AthenaCore.getInfoColour()))
                 .append(Component.text("» ", NamedTextColor.DARK_GRAY))

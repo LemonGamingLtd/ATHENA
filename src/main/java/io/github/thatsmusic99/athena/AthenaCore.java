@@ -4,14 +4,11 @@ import io.github.thatsmusic99.athena.commands.AthenaCommand;
 import io.github.thatsmusic99.athena.util.EventCache;
 import io.github.thatsmusic99.athena.util.RemappingUtil;
 import me.nahu.scheduler.wrapper.FoliaWrappedJavaPlugin;
-import me.nahu.scheduler.wrapper.WrappedScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class AthenaCore extends FoliaWrappedJavaPlugin {
 
@@ -25,7 +22,8 @@ public class AthenaCore extends FoliaWrappedJavaPlugin {
         getCommand("athena").setExecutor(new AthenaCommand());
         try {
             new Metrics(this, 12408);
-        } catch (NoClassDefFoundError ignored) {}
+        } catch (NoClassDefFoundError ignored) {
+        }
 
         new RemappingUtil();
 
