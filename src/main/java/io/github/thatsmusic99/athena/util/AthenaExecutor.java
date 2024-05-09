@@ -27,12 +27,14 @@ public class AthenaExecutor implements EventExecutor {
     private final EventExecutor executor;
     private final Field executorField;
     private final String name;
+    private final boolean differencesOnly;
 
-    public AthenaExecutor(CommandSender sender, RegisteredListener listener, String name) throws NoSuchFieldException, IllegalAccessException {
+    public AthenaExecutor(CommandSender sender, RegisteredListener listener, String name, boolean differencesOnly) throws NoSuchFieldException, IllegalAccessException {
         senders = new ArrayList<>();
         senders.add(sender);
         this.listener = listener;
         this.name = name;
+        this.differencesOnly = differencesOnly;
         executorField = listener.getClass().getDeclaredField("executor");
         executorField.setAccessible(true);
         executor = (EventExecutor) executorField.get(listener);
@@ -124,23 +126,25 @@ public class AthenaExecutor implements EventExecutor {
     }
 
     private void dumpData(long completionTime, HashMap<String, RemappingUtil.Change> differences) {
-        if (differences.isEmpty()) {
-            return;
-        }
-
+        TextComponent infoDump;
         TextComponent hoverText = Component.text().build();
-        TextComponent infoDump = Component.text(listener.getPlugin().getName(), AthenaCore.getInfoColour())
-            .append(Component.text(" made some changes to the event!", AthenaCore.getSuccessColour()));
+        if (differences.isEmpty() && !differencesOnly) {
+            infoDump = Component.text(listener.getPlugin().getName() + " didn't make any changes.",
+                    TextColor.color(0xA0B1B8), TextDecoration.ITALIC);
 
-        for (String key : differences.keySet()) {
-            hoverText = hoverText.append(Component.text(key, AthenaCore.getInfoColour()))
-                    .append(Component.text(" » ", NamedTextColor.DARK_GRAY))
-                    .append(Component.text(differences.get(key).getOldObject(), AthenaCore.getSuccessColour()))
-                    .append(Component.text(" to ", NamedTextColor.GRAY))
-                    .append(Component.text(differences.get(key).getNewObject(), AthenaCore.getSuccessColour()))
-                    .append(Component.text("\n"));
+        } else {
+            infoDump = Component.text(listener.getPlugin().getName(), AthenaCore.getInfoColour())
+                    .append(Component.text(" made some changes to the event!", AthenaCore.getSuccessColour()));
+
+            for (String key : differences.keySet()) {
+                hoverText = hoverText.append(Component.text(key, AthenaCore.getInfoColour()))
+                        .append(Component.text(" » ", NamedTextColor.DARK_GRAY))
+                        .append(Component.text(differences.get(key).getOldObject(), AthenaCore.getSuccessColour()))
+                        .append(Component.text(" to ", NamedTextColor.GRAY))
+                        .append(Component.text(differences.get(key).getNewObject(), AthenaCore.getSuccessColour()))
+                        .append(Component.text("\n"));
+            }
         }
-
         Class<?> listenerClass = listener.getListener().getClass();
         hoverText = hoverText.append(Component.text("Completion time ", AthenaCore.getInfoColour()))
                 .append(Component.text("» ", NamedTextColor.DARK_GRAY))

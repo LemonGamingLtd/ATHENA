@@ -31,7 +31,7 @@ public class RemappingUtil {
         return instance;
     }
 
-    public void remapEvent(Class<? extends Event> clazz, CommandSender sender) {
+    public void remapEvent(Class<? extends Event> clazz, CommandSender sender, boolean differencesOnly) {
         HashSet<AthenaExecutor> listeners = listeningUsers.getOrDefault(sender, new HashSet<>());
         if (registeredEvents.containsKey(clazz.getSimpleName()) && !registeredEvents.get(clazz.getSimpleName()).isEmpty()) {
             for (AthenaExecutor executor : registeredEvents.get(clazz.getSimpleName())) {
@@ -79,7 +79,7 @@ public class RemappingUtil {
         HashSet<AthenaExecutor> eventExecutors = new HashSet<>();
         for (RegisteredListener listener : handlerList.getRegisteredListeners()) {
             try {
-                AthenaExecutor executor = new AthenaExecutor(sender, listener, clazz.getSimpleName());
+                AthenaExecutor executor = new AthenaExecutor(sender, listener, clazz.getSimpleName(), differencesOnly);
                 executor.remapExecutor();
                 listeners.add(executor);
                 eventExecutors.add(executor);

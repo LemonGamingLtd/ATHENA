@@ -20,6 +20,9 @@ import java.util.List;
         usage = "/athena listen <Event Name|Class>"
 )
 public class ListenCommand implements IAthenaCommand {
+
+    private static final boolean DEFAULT_DIFFERENCES_ONLY = true;
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, String[] args) {
         if (args.length == 1) {
@@ -45,7 +48,9 @@ public class ListenCommand implements IAthenaCommand {
                 return true;
             }
         }
-        RemappingUtil.get().remapEvent(eventClass, sender);
+
+        boolean differencesOnly = args.length > 2 ? args[2].equalsIgnoreCase("true") : DEFAULT_DIFFERENCES_ONLY;
+        RemappingUtil.get().remapEvent(eventClass, sender, differencesOnly);
         return true;
     }
 
@@ -53,7 +58,10 @@ public class ListenCommand implements IAthenaCommand {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] args) {
-        List<String> results = new ArrayList<>();
+        if (args.length == 3) {
+            return List.of("true", "false");
+        }
+        final List<String> results = new ArrayList<>();
         if (args.length == 2) {
             StringUtil.copyPartialMatches(args[1], EventCache.get().getEventNames(), results);
         }
